@@ -48,6 +48,7 @@ const generatingField = (height, width, mineArr) => {
         isOpen: false,
         isMine: false,
         isBlow: false,
+        isBlank: true,
         isMarked: false
       };
 
@@ -72,6 +73,7 @@ const setValuesOnField = (squaresArr) => {
       if (checkSquareIsMine(rowIndex - 1, squareIndex + 1, squares)) { val++; }
 
       if (checkSquareIsMine(rowIndex, squareIndex - 1, squares)) { val++; }
+      if (checkSquareIsMine(rowIndex, squareIndex, squares)) { val++; }
       if (checkSquareIsMine(rowIndex, squareIndex + 1, squares)) { val++; }
 
       if (checkSquareIsMine(rowIndex + 1, squareIndex - 1, squares)) { val++; }
@@ -79,9 +81,24 @@ const setValuesOnField = (squaresArr) => {
       if (checkSquareIsMine(rowIndex + 1, squareIndex + 1, squares)) { val++; }
 
       square.value = val;
+      if (square.value) { square.isBlank = false; }
       return square;
     });
   });
+};
+
+const openAllBlanks = (pos, squares) => {
+  console.log('pos', pos);
+  const newSquares = squares.map(row => {
+    return row.map(square => {
+      if (square.isBlank === true) {
+        square.isOpen = true;
+      }
+      return square;
+    });
+  });
+
+  return newSquares;
 };
 
 
@@ -95,6 +112,7 @@ class Game extends Component {
 
     this.state = {
       gameStatus: {
+        isInit: false,
         isFail: false,
         isScarry: false
       },
@@ -152,8 +170,20 @@ class Game extends Component {
   }
 
   clickOnSquare(opt) {
-    const { squares } = this.state;
+    let { squares, gameStatus } = this.state;
     const { posX, posY } = opt;
+
+    // if (!gameStatus.isInit) {
+    //   if (squares[posX][posY].isBlank) {
+    //     this.setState({
+    //       gameStatus: {
+    //         isInit: true
+    //       }
+    //     });
+    //   } else {
+    //     this._init();
+    //   }
+    // }
 
     if (squares[posX][posY].isMarked) { return false; }
 
@@ -177,6 +207,10 @@ class Game extends Component {
     if (squares[posX][posY].isOpen) { return false; }
 
     squares[posX][posY].isOpen = true;
+
+    if (squares[posX][posY].isBlank) {
+      squares = openAllBlanks(opt, squares);
+    }
 
     this.setState({
       squares: squares
@@ -219,6 +253,7 @@ class Game extends Component {
 
     return (
       <div className="Game" onMouseUp={this.upOnSquare}>
+        <a href="https://github.com/edbond88/minesweeper">https://github.com/edbond88/minesweeper</a>
         <nav className="statusBar" onClick={this.clickOnNewGame}>
           <span className="smile" onClick={this.clickOnNewGame}>
             {gameStatus.isFail
