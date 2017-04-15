@@ -1,0 +1,73 @@
+.Game {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 30px auto;
+  padding: 0 0 40px 0;
+  background: #bdbdbd;
+}
+
+nav {
+  margin-bottom: 20px;
+}
+
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 288px;
+  height: 288px;
+  border: 2px solid #fff;
+  border-left-color: #7b7b7b;
+  border-top-color: #7b7b7b;
+}
+
+.row {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: default;
+  font-size: 16px;
+  font-weight: bold;
+  width: 32px;
+  height: 32px;
+  background: #bdbdbd;
+  box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #7b7b7b inset;
+}
+
+.square:active {
+  box-shadow: none;
+}
+
+.square._mine {
+  /*box-shadow: none;*/
+}
+.square._blow {
+  box-shadow: none;
+  background: red;
+}
+
+.square._open {
+  box-shadow: none;
+  background: #bdbdbd;
+}
+
+.statusBar {
+  margin: 10px 0;
+  font-size: 24px;
+}
+
+.smile {
+  cursor: pointer;
+  user-select: none;
+}
