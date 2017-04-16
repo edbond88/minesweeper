@@ -11,10 +11,9 @@ const getPosFromRandomRange = (min, max) => {
   return getRandomInt(min, max) + '_' + getRandomInt(min, max);
 };
 
-const generateRandomMineArray = (mineCount) => {
+const generateRandomMineArray = (mineCount, max) => {
   let mineArr = [];
   const min = 0;
-  const max = 9;
 
   for (let i = 0; i <= mineCount; i++) {
     const randomPos = getPosFromRandomRange(min, max);
@@ -32,6 +31,12 @@ const checkSquareIsMine = (posX, posY, array) => {
     return true;
   }
 };
+
+// const checkSquareIsBlank = (posX, posY, array) => {
+//   if (array[posX] && array[posX][posY] && array[posX][posY].isBlank) {
+//     return true;
+//   }
+// };
 
 const generatingField = (height, width, mineArr) => {
   let square = [];
@@ -68,6 +73,7 @@ const setValuesOnField = (squaresArr) => {
   squaresArr.map((row, rowIndex, squares) => {
     return row.map((square, squareIndex) => {
       let val = null;
+
       if (checkSquareIsMine(rowIndex - 1, squareIndex - 1, squares)) { val++; }
       if (checkSquareIsMine(rowIndex - 1, squareIndex, squares)) { val++; }
       if (checkSquareIsMine(rowIndex - 1, squareIndex + 1, squares)) { val++; }
@@ -87,11 +93,6 @@ const setValuesOnField = (squaresArr) => {
   });
 };
 
-const openAllBlanks = (pos, squares) => {
-
-  return squares;
-};
-
 
 class Game extends Component {
   constructor(props) {
@@ -108,10 +109,10 @@ class Game extends Component {
         isScarry: false
       },
       field: {
-        width: 9,
-        height: 9
+        width: 20,
+        height: 20
       },
-      mineCount: 5,
+      mineCount: 51,
       squares: null
     };
 
@@ -123,7 +124,7 @@ class Game extends Component {
 
   _init() {
     const {field, mineCount} = this.state;
-    const mineArr = generateRandomMineArray(mineCount);
+    const mineArr = generateRandomMineArray(mineCount, field.width);
 
     let newField = generatingField(field.height, field.width, mineArr);
 
@@ -132,6 +133,46 @@ class Game extends Component {
     this.setState({
       squares: newField
     });
+  }
+
+  _setOpenCell(posX, posY) {
+    let { squares } = this.state;
+
+    squares[posX][posY].isOpen = true;
+
+    this.setState({
+      squares: squares
+    });
+
+  }
+
+  _openAllBlanks(posX, posY) {
+    let { squares } = this.state;
+
+    // console.log('test');
+
+    if (!squares[posX] || !squares[posX][posY]) { return; }
+
+    if (!squares[posX][posY].isBlank) {
+      this._setOpenCell(posX, posY);
+      return;
+    }
+
+    if (squares[posX][posY].isOpen) { return; }
+
+    this._setOpenCell(posX, posY);
+
+      this._openAllBlanks(posX + 1, posY - 1);
+      this._openAllBlanks(posX + 1, posY);
+      this._openAllBlanks(posX + 1, posY + 1);
+
+      this._openAllBlanks(posX, posY - 1);
+      this._openAllBlanks(posX, posY);
+      this._openAllBlanks(posX, posY + 1);
+
+      this._openAllBlanks(posX - 1, posY - 1);
+      this._openAllBlanks(posX - 1, posY);
+      this._openAllBlanks(posX - 1, posY + 1);
   }
 
   clickOnNewGame() {
@@ -176,6 +217,11 @@ class Game extends Component {
     //   }
     // }
 
+    if (squares[posX][posY].isBlank) {
+      this._openAllBlanks(posX, posY);
+      return false;
+    }
+
     if (squares[posX][posY].isMarked) { return false; }
 
     if (squares[posX][posY].isMine) {
@@ -198,11 +244,6 @@ class Game extends Component {
     if (squares[posX][posY].isOpen) { return false; }
 
     squares[posX][posY].isOpen = true;
-
-    if (squares[posX][posY].isBlank) {
-      squares = openAllBlanks(opt, squares);
-    }
-
     this.setState({
       squares: squares
     });
@@ -280,10 +321,10 @@ class Game extends Component {
                         {square.isMarked
                           ? <span>🚩</span>
                           : square.isMine
-                            ? square.isBlow ? <span>💣</span> : <span>💣</span>
+                            ? square.isBlow ? <span>💣</span> : null
                             : square.isOpen
                               ? square.value
-                              : square.value
+                              : null
                         }
 
                       </span>
