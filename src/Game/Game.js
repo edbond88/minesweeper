@@ -88,17 +88,8 @@ const setValuesOnField = (squaresArr) => {
 };
 
 const openAllBlanks = (pos, squares) => {
-  console.log('pos', pos);
-  const newSquares = squares.map(row => {
-    return row.map(square => {
-      if (square.isBlank === true) {
-        square.isOpen = true;
-      }
-      return square;
-    });
-  });
 
-  return newSquares;
+  return squares;
 };
 
 
@@ -120,7 +111,7 @@ class Game extends Component {
         width: 9,
         height: 9
       },
-      mineCount: 10,
+      mineCount: 5,
       squares: null
     };
 
@@ -170,7 +161,7 @@ class Game extends Component {
   }
 
   clickOnSquare(opt) {
-    let { squares, gameStatus } = this.state;
+    let { squares } = this.state;
     const { posX, posY } = opt;
 
     // if (!gameStatus.isInit) {
@@ -289,10 +280,10 @@ class Game extends Component {
                         {square.isMarked
                           ? <span>🚩</span>
                           : square.isMine
-                            ? square.isBlow ? <span>💣</span> : null
+                            ? square.isBlow ? <span>💣</span> : <span>💣</span>
                             : square.isOpen
                               ? square.value
-                              : null
+                              : square.value
                         }
 
                       </span>
