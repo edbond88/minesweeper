@@ -286,6 +286,7 @@ class Game extends Component {
     return (
       <div className="Game" onMouseUp={this.upOnSquare}>
         <a href="https://github.com/edbond88/minesweeper">https://github.com/edbond88/minesweeper</a>
+        <img src="https://oddmenu.fra1.digitaloceanspaces.com/images/logo/avatar.png" />
         <nav className="statusBar" onClick={this.clickOnNewGame}>
           <span className="smile" onClick={this.clickOnNewGame}>
             {gameStatus.isFail
